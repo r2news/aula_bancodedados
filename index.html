@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Banco de Dados – Material de Apoio | Prof. Reinaldo Rodrigues</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Variables ─────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:       #06111e;
+  --surface:  #0c1e33;
+  --card:     #0f2640;
+  --card2:    #132d4a;
+  --border:   #1e3a55;
+  --primary:  #0ea5e9;
+  --primary2: #38bdf8;
+  --teal:     #14b8a6;
+  --amber:    #f59e0b;
+  --green:    #10b981;
+  --red:      #ef4444;
+  --purple:   #8b5cf6;
+  --text:     #dde8f5;
+  --muted:    #607b96;
+  --code-bg:  #020c14;
+  --radius:   12px;
+  --radius-sm:8px;
+  font-size:16px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.7;overflow-x:hidden}
+
+/* ── Scrollbar ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:var(--primary)}
+
+/* ── Progress bar ──────────────────────────────────────────────────────── */
+#progress-bar{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--primary),var(--teal));z-index:9999;transition:width .1s}
+
+/* ── Nav ───────────────────────────────────────────────────────────────── */
+nav{position:fixed;top:3px;left:0;right:0;z-index:1000;background:rgba(6,17,30,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 1.5rem}
+.nav-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;gap:1rem}
+.nav-brand{font-family:'Sora',sans-serif;font-weight:800;font-size:1rem;color:var(--primary);white-space:nowrap;flex-shrink:0}
+.nav-brand span{color:var(--amber)}
+.nav-links{display:flex;gap:.1rem;flex-wrap:wrap;justify-content:flex-end}
+.nav-links a{font-size:.78rem;font-weight:500;color:var(--muted);text-decoration:none;padding:.35rem .6rem;border-radius:6px;transition:all .2s;white-space:nowrap}
+.nav-links a:hover,.nav-links a.active{color:var(--primary);background:rgba(14,165,233,.1)}
+
+/* ── Hero ──────────────────────────────────────────────────────────────── */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:5rem 1.5rem 4rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 60% 40%,rgba(14,165,233,.12) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 20% 80%,rgba(20,184,166,.08) 0%,transparent 60%);pointer-events:none}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(14,165,233,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(14,165,233,.05) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%)}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(14,165,233,.12);border:1px solid rgba(14,165,233,.3);border-radius:99px;padding:.35rem 1rem;font-size:.8rem;font-weight:600;color:var(--primary);margin-bottom:2rem;animation:fadeUp .6s ease both}
+.hero-badge .dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.3)}}
+h1.hero-title{font-family:'Sora',sans-serif;font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;line-height:1.1;margin-bottom:1.25rem;animation:fadeUp .7s .1s ease both}
+h1.hero-title .accent{color:var(--primary)}
+h1.hero-title .accent2{color:var(--amber)}
+.hero-sub{font-size:1.15rem;color:var(--muted);max-width:680px;margin-bottom:2.5rem;font-weight:400;animation:fadeUp .7s .2s ease both}
+.hero-meta{display:flex;gap:2rem;flex-wrap:wrap;animation:fadeUp .7s .3s ease both}
+.hero-meta-item{display:flex;align-items:center;gap:.5rem;font-size:.88rem;color:var(--muted)}
+.hero-meta-item strong{color:var(--text)}
+.hero-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-top:3.5rem;animation:fadeUp .7s .4s ease both}
+.hero-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center}
+.hero-stat .num{font-family:'Sora',sans-serif;font-size:2rem;font-weight:800;color:var(--primary);display:block}
+.hero-stat .lbl{font-size:.8rem;color:var(--muted);margin-top:.25rem}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Container ─────────────────────────────────────────────────────────── */
+.container{max-width:1100px;margin:0 auto;padding:0 1.5rem}
+
+/* ── Section ───────────────────────────────────────────────────────────── */
+section{padding:5rem 0}
+section:nth-child(even){background:var(--surface)}
+.section-label{font-size:.75rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--primary);margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+.section-label::before{content:'';display:inline-block;width:24px;height:2px;background:var(--primary)}
+h2.section-title{font-family:'Sora',sans-serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;line-height:1.2;margin-bottom:1rem;color:#f0f8ff}
+.section-desc{color:var(--muted);max-width:680px;font-size:1rem;margin-bottom:3rem}
+
+/* ── Cards ─────────────────────────────────────────────────────────────── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;transition:transform .2s,border-color .2s,box-shadow .2s}
+.card:hover{transform:translateY(-3px);border-color:rgba(14,165,233,.4);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.card-title{font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:#f0f8ff}
+.card-body{font-size:.92rem;color:var(--muted);line-height:1.7}
+
+/* ── Code blocks ───────────────────────────────────────────────────────── */
+.code-block{background:var(--code-bg);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:1.5rem 0}
+.code-header{background:rgba(255,255,255,.04);border-bottom:1px solid var(--border);padding:.6rem 1rem;display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--muted)}
+.code-dots{display:flex;gap:5px}
+.code-dots span{width:11px;height:11px;border-radius:50%}
+.code-dots .r{background:#ff5f57}.code-dots .y{background:#febc2e}.code-dots .g{background:#28c840}
+.code-body{padding:1.25rem 1.5rem;overflow-x:auto}
+pre{font-family:'JetBrains Mono',monospace;font-size:.875rem;line-height:1.8;color:#cdd6f4}
+.kw{color:#89b4fa;font-weight:700}   /* keyword: SELECT, FROM, WHERE */
+.fn{color:#cba6f7}                   /* function */
+.str{color:#a6e3a1}                  /* string */
+.num{color:#fab387}                  /* number */
+.cmt{color:#585b70;font-style:italic}/* comment */
+.tbl{color:#f38ba8}                  /* table name */
+.col{color:#89dceb}                  /* column */
+.op{color:#f5c2e7}                   /* operator */
+.copy-btn{background:rgba(14,165,233,.15);border:1px solid rgba(14,165,233,.3);color:var(--primary);font-size:.72rem;font-family:'DM Sans',sans-serif;padding:.25rem .65rem;border-radius:5px;cursor:pointer;transition:all .2s}
+.copy-btn:hover{background:rgba(14,165,233,.3)}
+
+/* ── Highlight box ─────────────────────────────────────────────────────── */
+.highlight{border-left:3px solid var(--primary);background:rgba(14,165,233,.07);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:1rem 1.25rem;margin:1.5rem 0;font-size:.93rem}
+.highlight.amber{border-color:var(--amber);background:rgba(245,158,11,.07)}
+.highlight.green{border-color:var(--green);background:rgba(16,185,129,.07)}
+.highlight.red{border-color:var(--red);background:rgba(239,68,68,.07)}
+.highlight strong{display:block;margin-bottom:.35rem;font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.highlight.amber strong{color:var(--amber)}
+.highlight.green strong{color:var(--green)}
+.highlight.red strong{color:var(--red)}
+.highlight strong{color:var(--primary)}
+
+/* ── Table ─────────────────────────────────────────────────────────────── */
+.table-wrap{overflow-x:auto;margin:1.5rem 0;border-radius:var(--radius);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+thead{background:var(--card2)}
+thead th{padding:.85rem 1rem;text-align:left;font-family:'Sora',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--primary);border-bottom:1px solid var(--border)}
+tbody tr{border-bottom:1px solid rgba(30,58,85,.5);transition:background .15s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:rgba(14,165,233,.05)}
+tbody td{padding:.85rem 1rem;color:var(--muted)}
+tbody td strong{color:var(--text);font-weight:600}
+.badge{display:inline-flex;align-items:center;padding:.2rem .65rem;border-radius:99px;font-size:.75rem;font-weight:700}
+.badge-green{background:rgba(16,185,129,.15);color:var(--green)}
+.badge-red{background:rgba(239,68,68,.15);color:var(--red)}
+.badge-amber{background:rgba(245,158,11,.15);color:var(--amber)}
+.badge-blue{background:rgba(14,165,233,.15);color:var(--primary)}
+
+/* ── 4 Pillars ─────────────────────────────────────────────────────────── */
+.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;margin-top:2rem}
+.pillar{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:2rem 1.5rem;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.pillar:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.pillar-num{font-family:'Sora',sans-serif;font-size:4rem;font-weight:900;position:absolute;top:-1rem;right:.5rem;opacity:.06;line-height:1;pointer-events:none}
+.pillar-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1.25rem}
+.pillar-label{font-family:'Sora',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:.35rem}
+.pillar-title{font-family:'Sora',sans-serif;font-size:1.3rem;font-weight:800;margin-bottom:.75rem;color:#f0f8ff}
+.pillar-desc{font-size:.88rem;color:var(--muted);margin-bottom:1rem}
+.pillar-example{background:var(--code-bg);border-radius:var(--radius-sm);padding:.75rem 1rem;font-size:.82rem;color:var(--muted);border-left:2px solid currentColor;font-style:italic}
+
+/* ── SGBD functions ────────────────────────────────────────────────────── */
+.func-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem}
+.func-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;display:flex;gap:1rem;align-items:flex-start;transition:border-color .2s,transform .2s}
+.func-card:hover{border-color:var(--primary);transform:translateX(4px)}
+.func-icon{width:42px;height:42px;border-radius:10px;background:rgba(14,165,233,.12);border:1px solid rgba(14,165,233,.25);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0}
+.func-content h4{font-family:'Sora',sans-serif;font-size:.95rem;font-weight:700;margin-bottom:.3rem;color:#f0f8ff}
+.func-content p{font-size:.85rem;color:var(--muted);line-height:1.6}
+
+/* ── Models grid ───────────────────────────────────────────────────────── */
+.models-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem}
+.model-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;transition:transform .2s,border-color .2s}
+.model-card:hover{transform:translateY(-3px)}
+.model-tag{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.2rem .65rem;border-radius:99px;display:inline-flex;margin-bottom:1rem}
+.model-card h3{font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:.5rem;color:#f0f8ff}
+.model-card p{font-size:.88rem;color:var(--muted);margin-bottom:1rem}
+.model-use{font-size:.82rem;background:var(--code-bg);padding:.65rem 1rem;border-radius:var(--radius-sm);color:var(--muted)}
+.model-use strong{color:var(--text);font-weight:600}
+
+/* ── SQL commands ──────────────────────────────────────────────────────── */
+.sql-commands{display:grid;gap:.75rem}
+.sql-cmd{display:grid;grid-template-columns:120px 1fr;gap:1rem;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.25rem;transition:border-color .2s}
+.sql-cmd:hover{border-color:var(--primary)}
+.sql-cmd-kw{font-family:'JetBrains Mono',monospace;font-size:.95rem;font-weight:700}
+.sql-cmd-desc{font-size:.88rem;color:var(--muted)}
+.sql-cmd-desc strong{color:var(--text);display:block;margin-bottom:.15rem}
+
+/* ── Tabs ──────────────────────────────────────────────────────────────── */
+.tabs{border-bottom:1px solid var(--border);display:flex;gap:.25rem;margin-bottom:2rem;overflow-x:auto}
+.tab{background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;padding:.75rem 1.25rem;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:all .2s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+/* ── Filter rows ───────────────────────────────────────────────────────── */
+.filter-list{display:flex;flex-direction:column;gap:.75rem}
+.filter-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.25rem;align-items:center;transition:border-color .2s}
+.filter-row:hover{border-color:var(--teal)}
+.filter-q{font-size:.9rem;color:var(--text)}
+.filter-code{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--green);background:var(--code-bg);padding:.35rem .75rem;border-radius:5px;overflow-x:auto;white-space:nowrap}
+
+/* ── Architecture flow ─────────────────────────────────────────────────── */
+.arch-flow{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.5rem;padding:2.5rem;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin:2rem 0}
+.arch-node{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.85rem 1.25rem;text-align:center;min-width:130px}
+.arch-node .icon{font-size:1.75rem;display:block;margin-bottom:.35rem}
+.arch-node .label{font-family:'Sora',sans-serif;font-size:.82rem;font-weight:700;color:#f0f8ff}
+.arch-node .sub{font-size:.72rem;color:var(--muted);margin-top:.15rem}
+.arch-arrow{color:var(--primary);font-size:1.5rem;flex-shrink:0}
+
+/* ── Modeling steps ────────────────────────────────────────────────────── */
+.model-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem}
+.model-step{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;position:relative;overflow:hidden}
+.model-step::before{content:attr(data-step);position:absolute;top:-1.5rem;right:.5rem;font-family:'Sora',sans-serif;font-size:6rem;font-weight:900;opacity:.04;line-height:1;pointer-events:none;color:#fff}
+.step-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:.95rem;font-weight:800;margin-bottom:1rem}
+
+/* ── Keys visual ───────────────────────────────────────────────────────── */
+.keys-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.5rem}
+.key-card{background:var(--card);border-radius:var(--radius);padding:1.75rem;border-top:3px solid}
+.key-card.pk{border-color:var(--amber)}
+.key-card.fk{border-color:var(--teal)}
+.key-card h3{font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin-bottom:.5rem;color:#f0f8ff}
+
+/* ── Security grid ─────────────────────────────────────────────────────── */
+.sec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.25rem}
+.sec-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem}
+.sec-card .sec-icon{font-size:1.75rem;margin-bottom:.75rem;display:block}
+.sec-card h4{font-family:'Sora',sans-serif;font-size:.95rem;font-weight:700;margin-bottom:.4rem;color:#f0f8ff}
+.sec-card p{font-size:.85rem;color:var(--muted)}
+
+/* ── Backup types ──────────────────────────────────────────────────────── */
+.backup-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem}
+.backup-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;transition:transform .2s,border-color .2s}
+.backup-card:hover{transform:translateY(-3px);border-color:var(--primary)}
+.backup-card .bk-type{font-family:'Sora',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);margin-bottom:.5rem}
+.backup-card h4{font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;margin-bottom:.5rem;color:#f0f8ff}
+.backup-card p{font-size:.85rem;color:var(--muted)}
+
+/* ── Tools ─────────────────────────────────────────────────────────────── */
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
+.tool-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;transition:transform .2s,border-color .2s;display:flex;align-items:center;gap:1rem}
+.tool-card:hover{transform:translateY(-2px);border-color:var(--primary)}
+.tool-icon{font-size:1.75rem;flex-shrink:0}
+.tool-info h4{font-family:'Sora',sans-serif;font-size:.9rem;font-weight:700;color:#f0f8ff;margin-bottom:.2rem}
+.tool-info p{font-size:.78rem;color:var(--muted)}
+
+/* ── Glossary ──────────────────────────────────────────────────────────── */
+.glossary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem}
+.gloss-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;transition:border-color .2s}
+.gloss-item:hover{border-color:var(--primary)}
+.gloss-term{font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:700;color:var(--primary);margin-bottom:.4rem}
+.gloss-def{font-size:.88rem;color:var(--muted)}
+
+/* ── Activities ────────────────────────────────────────────────────────── */
+.activity{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;margin-bottom:1.5rem}
+.activity-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem}
+.activity-num{width:36px;height:36px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-weight:800;font-size:.95rem;color:#fff;flex-shrink:0}
+.activity h3{font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:#f0f8ff}
+.activity p{font-size:.9rem;color:var(--muted);margin-bottom:1.25rem}
+.activity ol,.activity ul{padding-left:1.5rem;color:var(--muted);font-size:.9rem}
+.activity li{margin-bottom:.5rem}
+.activity-table th{background:var(--card2)}
+
+/* ── Summary rows ──────────────────────────────────────────────────────── */
+.summary-rows{display:flex;flex-direction:column;gap:.75rem}
+.summary-row{display:grid;grid-template-columns:1fr 2fr;gap:1.5rem;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem 1.5rem;align-items:center}
+.summary-key{font-family:'Sora',sans-serif;font-size:.95rem;font-weight:700;color:var(--amber)}
+.summary-val{font-size:.9rem;color:var(--muted)}
+
+/* ── Quote ─────────────────────────────────────────────────────────────── */
+.quote{font-family:'Sora',sans-serif;font-size:1.15rem;font-style:italic;color:var(--text);border-left:3px solid var(--amber);padding:1rem 1.5rem;background:rgba(245,158,11,.05);border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin:2rem 0}
+
+/* ── Footer ────────────────────────────────────────────────────────────── */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:3rem 1.5rem;text-align:center}
+footer .ft-brand{font-family:'Sora',sans-serif;font-size:1.25rem;font-weight:800;color:var(--primary);margin-bottom:.5rem}
+footer p{font-size:.85rem;color:var(--muted);margin-bottom:.25rem}
+footer a{color:var(--primary);text-decoration:none}
+
+/* ── Utilities ─────────────────────────────────────────────────────────── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.mt-2{margin-top:2rem}.mt-1{margin-top:1rem}.mb-1{margin-bottom:1rem}
+.text-muted{color:var(--muted)}.text-primary{color:var(--primary)}.text-amber{color:var(--amber)}.text-green{color:var(--green)}.text-red{color:var(--red)}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .55s ease,transform .55s ease}
+.reveal.visible{opacity:1;transform:none}
+.tag{display:inline-flex;align-items:center;background:rgba(14,165,233,.12);color:var(--primary);font-size:.75rem;font-weight:600;padding:.2rem .6rem;border-radius:5px;margin:.2rem}
+
+/* ── Responsive ────────────────────────────────────────────────────────── */
+@media(max-width:768px){
+  .grid-2,.grid-3,.keys-grid,.filter-row,.summary-row{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .sql-cmd{grid-template-columns:1fr}
+  .arch-flow{flex-direction:column}
+  .arch-arrow{transform:rotate(90deg)}
+}
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand">BD<span>.</span>dev</div>
+    <div class="nav-links">
+      <a href="#pilares">Pilares</a>
+      <a href="#banco">Banco de Dados</a>
+      <a href="#sgbd">SGBD</a>
+      <a href="#modelos">Modelos</a>
+      <a href="#sql">SQL</a>
+      <a href="#filtragem">Filtragem</a>
+      <a href="#arquitetura">Arquitetura</a>
+      <a href="#modelagem">Modelagem</a>
+      <a href="#seguranca">Segurança</a>
+      <a href="#backup">Backup</a>
+      <a href="#ferramentas">Ferramentas</a>
+      <a href="#glossario">Glossário</a>
+      <a href="#atividades">Atividades</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="topo">
+  <div class="hero-grid"></div>
+  <div class="hero-inner container">
+    <div class="hero-badge"><span class="dot"></span> Material de Apoio Interativo</div>
+    <h1 class="hero-title">
+      <span class="accent">Banco de Dados</span><br>
+      Do dado bruto à<br>
+      <span class="accent2">decisão inteligente</span>
+    </h1>
+    <p class="hero-sub">Aprenda os fundamentos de banco de dados com linguagem clara, exemplos reais do cotidiano e código prático. Material completo para a disciplina de Informática Básica.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">👨‍🏫 <strong>Prof. Reinaldo Rodrigues</strong></div>
+      <div class="hero-meta-item">📚 <strong>Informática Básica / Banco de Dados</strong></div>
+      <div class="hero-meta-item">🏫 <strong>Ibirité – MG</strong></div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="num" data-count="14">0</span><div class="lbl">Módulos de conteúdo</div></div>
+      <div class="hero-stat"><span class="num" data-count="30">0</span><div class="lbl">Exemplos práticos</div></div>
+      <div class="hero-stat"><span class="num" data-count="6">0</span><div class="lbl">Blocos de código SQL</div></div>
+      <div class="hero-stat"><span class="num" data-count="3">0</span><div class="lbl">Atividades práticas</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 1. PILARES: DADO → DECISÃO -->
+<section id="pilares">
+<div class="container">
+  <p class="section-label">Módulo 1</p>
+  <h2 class="section-title">De Dado à Decisão: os 4 Pilares</h2>
+  <p class="section-desc">Antes de estudar banco de dados, é preciso entender quatro conceitos que caminham juntos. Esse é o ponto de partida de qualquer profissional de dados.</p>
+
+  <div class="pillars reveal">
+    <div class="pillar">
+      <div class="pillar-num">1</div>
+      <div class="pillar-icon" style="background:rgba(14,165,233,.15);color:var(--primary)">📊</div>
+      <div class="pillar-label" style="color:var(--primary)">Passo 01</div>
+      <div class="pillar-title">Dado</div>
+      <p class="pillar-desc">Registro bruto, isolado, sem contexto suficiente para gerar sentido por si só. É o ponto de partida de tudo, mas sozinho pouco significa.</p>
+      <div class="pillar-example" style="border-color:var(--primary)">Exemplo: <strong>8,5</strong> — apenas um número, sem nenhum contexto.</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-num">2</div>
+      <div class="pillar-icon" style="background:rgba(20,184,166,.15);color:var(--teal)">🔍</div>
+      <div class="pillar-label" style="color:var(--teal)">Passo 02</div>
+      <div class="pillar-title">Informação</div>
+      <p class="pillar-desc">Dado organizado e contextualizado. Quando o dado recebe nome, data, local e relação com outros dados, ele se transforma em informação útil.</p>
+      <div class="pillar-example" style="border-color:var(--teal)">Exemplo: <strong>A aluna Ana tirou 8,5 em Banco de Dados no 1º bimestre.</strong></div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-num">3</div>
+      <div class="pillar-icon" style="background:rgba(139,92,246,.15);color:var(--purple)">🧠</div>
+      <div class="pillar-label" style="color:var(--purple)">Passo 03</div>
+      <div class="pillar-title">Conhecimento</div>
+      <p class="pillar-desc">Interpretação da informação para entender um padrão ou situação. Aqui começa a análise: comparamos, relacionamos e extraímos sentido.</p>
+      <div class="pillar-example" style="border-color:var(--purple)">Exemplo: <strong>Ana está com ótimo desempenho. Turma tem média de 7,2 — acima do esperado.</strong></div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-num">4</div>
+      <div class="pillar-icon" style="background:rgba(245,158,11,.15);color:var(--amber)">⚡</div>
+      <div class="pillar-label" style="color:var(--amber)">Passo 04</div>
+      <div class="pillar-title">Decisão</div>
+      <p class="pillar-desc">Ação tomada com base no conhecimento produzido. É o destino de todo o processo: dados bem gerenciados levam a decisões mais inteligentes.</p>
+      <div class="pillar-example" style="border-color:var(--amber)">Exemplo: <strong>Professora propõe atividades avançadas para alunos acima de 8,0.</strong></div>
+    </div>
+  </div>
+
+  <div class="highlight reveal mt-2">
+    <strong>💡 Exemplo do cotidiano escolar</strong>
+    A nota <code style="color:var(--amber)">6,0</code> é apenas um dado. Quando sabemos que <em>João tirou 6,0 em Banco de Dados no primeiro bimestre</em>, temos uma informação. Quando percebemos que <em>a maioria dos alunos tirou entre 5,5 e 6,5</em>, temos conhecimento para decidir se é necessária uma revisão do conteúdo.
+  </div>
+
+  <div class="highlight amber reveal">
+    <strong>🤔 Pergunta para reflexão</strong>
+    Uma empresa consegue tomar boas decisões se seus dados estão incompletos, repetidos, espalhados ou desorganizados? Pense em exemplos da sua vida: quantas decisões erradas já foram tomadas por falta de dados confiáveis?
+  </div>
+</div>
+</section>
+
+<!-- 2. O QUE É BANCO DE DADOS -->
+<section id="banco">
+<div class="container">
+  <p class="section-label">Módulo 2</p>
+  <h2 class="section-title">O que é Banco de Dados?</h2>
+  <p class="section-desc">Banco de dados está em praticamente tudo que usamos na vida digital. Entender o conceito muda a forma como você enxerga os sistemas.</p>
+
+  <div class="grid-2 reveal">
+    <div>
+      <p style="font-size:1.05rem;line-height:1.8;color:var(--muted);margin-bottom:1.5rem">
+        <strong style="color:var(--text)">Banco de dados</strong> é uma coleção organizada de dados, armazenada de maneira estruturada, para permitir cadastro, consulta, atualização, análise, proteção e recuperação das informações.
+      </p>
+      <p style="font-size:1.05rem;line-height:1.8;color:var(--muted);margin-bottom:1.5rem">
+        Pode ser algo simples como uma <strong style="color:var(--text)">agenda de contatos</strong>, ou extremamente complexo como o sistema de um banco digital que processa milhões de transações por segundo.
+      </p>
+      <div class="highlight green">
+        <strong>📌 Definição essencial</strong>
+        Banco de dados é a <strong>memória organizada dos sistemas</strong>. Ele armazena dados de forma estruturada para que pessoas e aplicações possam acessar informações com segurança e rapidez.
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:1rem">📱 Onde os BDs aparecem no seu dia</div>
+        <div style="display:flex;flex-direction:column;gap:.65rem">
+          <div style="display:flex;gap:.75rem;align-items:center;padding:.75rem;background:var(--card2);border-radius:var(--radius-sm)">
+            <span style="font-size:1.5rem">💬</span>
+            <div><strong style="font-size:.88rem;color:var(--text)">WhatsApp / Telegram</strong><br><span style="font-size:.8rem;color:var(--muted)">Armazena mensagens, contatos, grupos, mídia e histórico.</span></div>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:center;padding:.75rem;background:var(--card2);border-radius:var(--radius-sm)">
+            <span style="font-size:1.5rem">🏦</span>
+            <div><strong style="font-size:.88rem;color:var(--text)">Pix / Aplicativo bancário</strong><br><span style="font-size:.8rem;color:var(--muted)">Conta, chave, valor, destinatário, comprovante e rastreabilidade.</span></div>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:center;padding:.75rem;background:var(--card2);border-radius:var(--radius-sm)">
+            <span style="font-size:1.5rem">🏫</span>
+            <div><strong style="font-size:.88rem;color:var(--text)">Sistema escolar</strong><br><span style="font-size:.8rem;color:var(--muted)">Alunos, notas, frequência, turmas, professores e históricos.</span></div>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:center;padding:.75rem;background:var(--card2);border-radius:var(--radius-sm)">
+            <span style="font-size:1.5rem">🏥</span>
+            <div><strong style="font-size:.88rem;color:var(--text)">Posto de Saúde / UPA</strong><br><span style="font-size:.8rem;color:var(--muted)">Pacientes, consultas, vacinas, exames e prontuários.</span></div>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:center;padding:.75rem;background:var(--card2);border-radius:var(--radius-sm)">
+            <span style="font-size:1.5rem">🛒</span>
+            <div><strong style="font-size:.88rem;color:var(--text)">Loja virtual</strong><br><span style="font-size:.8rem;color:var(--muted)">Produtos, pedidos, clientes, pagamentos e rastreamento de entrega.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 3. SGBD -->
+<section id="sgbd">
+<div class="container">
+  <p class="section-label">Módulo 3</p>
+  <h2 class="section-title">SGBD — Sistema Gerenciador de Banco de Dados</h2>
+  <p class="section-desc">O SGBD é o software que fica "no meio do caminho" entre a aplicação e os dados. Sem ele, não haveria controle, segurança nem organização.</p>
+
+  <div class="highlight reveal">
+    <strong>💡 Ideia-chave</strong>
+    O <strong>banco de dados</strong> guarda as informações. O <strong>SGBD</strong> gerencia como essas informações serão criadas, acessadas, protegidas, alteradas e recuperadas. Em inglês: DBMS — Database Management System.
+  </div>
+
+  <div class="func-grid reveal mt-2">
+    <div class="func-card">
+      <div class="func-icon">🗂️</div>
+      <div class="func-content"><h4>Criar estruturas</h4><p>Permite criar tabelas, campos, chaves e relacionamentos. Define como os dados serão organizados antes de qualquer cadastro.</p></div>
+    </div>
+    <div class="func-card">
+      <div class="func-icon">💾</div>
+      <div class="func-content"><h4>Armazenar dados</h4><p>Registra os dados de forma organizada, persistente e recuperável, garantindo que nenhuma informação se perca.</p></div>
+    </div>
+    <div class="func-card">
+      <div class="func-icon">🔎</div>
+      <div class="func-content"><h4>Consultar informações</h4><p>Permite buscar dados com comandos SQL, filtros, ordenações e relatórios, com alta performance mesmo em grandes volumes.</p></div>
+    </div>
+    <div class="func-card">
+      <div class="func-icon">🔐</div>
+      <div class="func-content"><h4>Controlar acesso</h4><p>Define quem pode ver, inserir, alterar ou excluir dados. Garante que cada usuário acesse apenas o que for necessário para sua função.</p></div>
+    </div>
+    <div class="func-card">
+      <div class="func-icon">✅</div>
+      <div class="func-content"><h4>Garantir integridade</h4><p>Evita inconsistências, duplicidades e registros inválidos. Aplica regras que impedem que dados "sujos" entrem no sistema.</p></div>
+    </div>
+    <div class="func-card">
+      <div class="func-icon">🛡️</div>
+      <div class="func-content"><h4>Executar backup</h4><p>Permite cópias de segurança automáticas ou programadas, garantindo recuperação em caso de falha, erro humano ou desastre.</p></div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Sora',sans-serif;font-size:1.25rem;font-weight:700;margin:3rem 0 1.5rem;color:#f0f8ff" class="reveal">SGBDs Livres e Proprietários</h3>
+
+  <div class="grid-2 reveal">
+    <div class="card" style="border-top:3px solid var(--green)">
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem">
+        <span style="font-size:1.5rem">🔓</span>
+        <h4 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;color:#f0f8ff">Livres / Código Aberto</h4>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.6rem">
+        <div style="padding:.6rem .85rem;background:var(--card2);border-radius:var(--radius-sm);display:flex;justify-content:space-between;align-items:center">
+          <strong style="font-size:.88rem">PostgreSQL</strong><span style="font-size:.78rem;color:var(--green)">Web, corporativo</span>
+        </div>
+        <div style="padding:.6rem .85rem;background:var(--card2);border-radius:var(--radius-sm);display:flex;justify-content:space-between;align-items:center">
+          <strong style="font-size:.88rem">MySQL</strong><span style="font-size:.78rem;color:var(--green)">Web, popular</span>
+        </div>
+        <div style="padding:.6rem .85rem;background:var(--card2);border-radius:var(--radius-sm);display:flex;justify-content:space-between;align-items:center">
+          <strong style="font-size:.88rem">MariaDB</strong><span style="font-size:.78rem;color:var(--green)">Fork do MySQL</span>
+        </div>
+        <div style="padding:.6rem .85rem;background:var(--card2);border-radius:var(--radius-sm);display:flex;justify-content:space-between;align-items:center">
+          <strong style="font-size:.88rem">SQLite</strong><span style="font-size:.78rem;color:var(--green)">Leve, mobile, apps</span>
+        </div>
+        <div style="padding:.6rem .85rem;background:var(--card2);border-radius:var(--radius-sm);display:flex;justify-content:space-between;align-items:center">
+          <strong style="font-size:.88rem">Firebird</strong><span style="font-size:.78rem;color:var(--green)">Sistemas internos</span>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--amber)">
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem">
+        <span style="font-size:1.5rem">🔒</span>
+        <h4 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;color:#f0f8ff">Proprietários (licença paga)</h4>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.6rem">
+        <div style="padding:.6rem .85rem;background:var(--card2);border-radius:var(--radius-sm);display:flex;justify-content:space-between;align-items:center">
+          <strong style="font-size:.88rem">Oracle Database</strong><span style="font-size:.78rem;color:var(--amber)">Missão crítica</span>
+        </div>
+        <div style="padding:.6rem .85rem;background:var(--card2);border-radius:var(--radius-sm);display:flex;justify-content:space-between;align-items:center">
+          <strong style="font-size:.88rem">Microsoft SQL Server</strong><span style="font-size:.78rem;color:var(--amber)">Ecossistema Microsoft</span>
+        </div>
+        <div style="padding:.6rem .85rem;background:var(--card2);border-radius:var(--radius-sm);display:flex;justify-content:space-between;align-items:center">
+          <strong style="font-size:.88rem">IBM Db2</strong><span style="font-size:.78rem;color:var(--amber)">Grandes bancos, governo</span>
+        </div>
+      </div>
+      <div class="highlight amber mt-1" style="margin-top:1rem">
+        <strong>Como escolher?</strong>
+        Considere: tamanho do projeto, volume de dados, custo, suporte, segurança, desempenho e equipe técnica disponível.
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 4. MODELOS -->
+<section id="modelos">
+<div class="container">
+  <p class="section-label">Módulo 4</p>
+  <h2 class="section-title">Modelos de Banco de Dados</h2>
+  <p class="section-desc">Existem diferentes formas de organizar e acessar informações. Conhecer os modelos ajuda o profissional a escolher a estrutura mais adequada para cada projeto.</p>
+
+  <div class="models-grid reveal">
+    <div class="model-card" style="border-top:3px solid var(--primary)">
+      <div class="model-tag" style="background:rgba(14,165,233,.12);color:var(--primary)">Mais utilizado</div>
+      <h3>Modelo Relacional</h3>
+      <p>Organiza os dados em <strong style="color:var(--text)">tabelas compostas por linhas e colunas</strong>. Tabelas se conectam por meio de chaves, criando relações entre os dados.</p>
+      <div class="model-use"><strong>Ideal para:</strong> cadastros de alunos, clientes, produtos, notas, vendas, matrículas — qualquer dado bem estruturado.<br><strong>SGBDs:</strong> MySQL, PostgreSQL, SQL Server, Oracle.</div>
+    </div>
+    <div class="model-card" style="border-top:3px solid var(--teal)">
+      <div class="model-tag" style="background:rgba(20,184,166,.12);color:var(--teal)">Flexível</div>
+      <h3>Modelo NoSQL</h3>
+      <p>Armazena dados de forma <strong style="color:var(--text)">flexível, sem estrutura rígida de tabelas</strong>. Ideal para dados variados, em grande volume ou com formato imprevisível.</p>
+      <div class="model-use"><strong>Ideal para:</strong> redes sociais, big data, logs de sistema, chats, documentos e dados em tempo real.<br><strong>Exemplos:</strong> MongoDB, Redis, Cassandra, Firebase.</div>
+    </div>
+    <div class="model-card" style="border-top:3px solid var(--amber)">
+      <div class="model-tag" style="background:rgba(245,158,11,.12);color:var(--amber)">Histórico</div>
+      <h3>Modelo Hierárquico</h3>
+      <p>Organiza os dados em <strong style="color:var(--text)">formato de árvore</strong>, com relação pai e filho. Um registro "pai" pode ter vários registros "filhos".</p>
+      <div class="model-use"><strong>Ideal para:</strong> estruturas de pastas, organogramas, classificações em níveis hierárquicos.<br><strong>Exemplo real:</strong> estrutura de arquivos do Windows/Linux.</div>
+    </div>
+    <div class="model-card" style="border-top:3px solid var(--green)">
+      <div class="model-tag" style="background:rgba(16,185,129,.12);color:var(--green)">Espacial</div>
+      <h3>Modelo Georreferenciado</h3>
+      <p>Armazena dados relacionados à <strong style="color:var(--text)">localização espacial e geográfica</strong>. Permite consultas por coordenadas, polígonos e distâncias.</p>
+      <div class="model-use"><strong>Ideal para:</strong> mapas, rotas, fiscalização, planejamento urbano e localização de serviços públicos.<br><strong>Exemplo:</strong> PostGIS (extensão do PostgreSQL).</div>
+    </div>
+    <div class="model-card" style="border-top:3px solid var(--purple)">
+      <div class="model-tag" style="background:rgba(139,92,246,.12);color:var(--purple)">Avançado</div>
+      <h3>Modelo Orientado a Objetos</h3>
+      <p>Armazena dados seguindo a <strong style="color:var(--text)">lógica de objetos da programação</strong>. Integra-se naturalmente com linguagens OO como Java e Python.</p>
+      <div class="model-use"><strong>Ideal para:</strong> aplicações com estruturas complexas que se integram diretamente com código orientado a objetos.</div>
+    </div>
+  </div>
+
+  <div class="highlight reveal mt-2">
+    <strong>💡 Comparação simples</strong>
+    Se os dados são bem estruturados — como alunos, cursos e notas — o <strong>modelo relacional</strong> funciona muito bem. Se os dados são variados, flexíveis e em grande volume — como posts de rede social ou logs de acesso — uma solução <strong>NoSQL</strong> pode ser mais adequada.
+  </div>
+</div>
+</section>
+
+<!-- 5. MODELO RELACIONAL + TABELA -->
+<section id="tabela">
+<div class="container">
+  <p class="section-label">Módulo 5</p>
+  <h2 class="section-title">Modelo Relacional: Tabelas, Linhas e Colunas</h2>
+  <p class="section-desc">O modelo relacional é o mais utilizado no mundo. Para entendê-lo, basta compreender três conceitos simples: tabela, linha e coluna.</p>
+
+  <div class="grid-3 reveal" style="margin-bottom:2.5rem">
+    <div class="card" style="text-align:center;border-top:3px solid var(--primary)">
+      <div style="font-size:2rem;margin-bottom:.75rem">📋</div>
+      <h4 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;color:var(--primary);margin-bottom:.4rem">TABELA</h4>
+      <p class="card-body">Representa um assunto principal do sistema, também chamado de <strong style="color:var(--text)">entidade</strong>. Exemplos: Alunos, Produtos, Clientes, Pedidos.</p>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid var(--teal)">
+      <div style="font-size:2rem;margin-bottom:.75rem">↕️</div>
+      <h4 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;color:var(--teal);margin-bottom:.4rem">LINHA (Registro)</h4>
+      <p class="card-body">Cada linha representa <strong style="color:var(--text)">um único elemento</strong> daquela entidade. Cada aluno é uma linha; cada produto é uma linha.</p>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid var(--amber)">
+      <div style="font-size:2rem;margin-bottom:.75rem">↔️</div>
+      <h4 style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;color:var(--amber);margin-bottom:.4rem">COLUNA (Campo)</h4>
+      <p class="card-body">Cada coluna representa uma <strong style="color:var(--text)">característica/atributo</strong> dos elementos. Nome, CPF, telefone, nota — cada um é uma coluna.</p>
+    </div>
+  </div>
+
+  <div class="table-wrap reveal">
+    <table>
+      <thead>
+        <tr>
+          <th>ID 🔑</th><th>Nome</th><th>Curso</th><th>Turno</th><th>Nota</th><th>Situação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>1</strong></td><td><strong>Ana</strong></td><td>Banco de Dados</td><td>Noite</td><td><strong>8,5</strong></td><td><span class="badge badge-green">Aprovada</span></td></tr>
+        <tr><td><strong>2</strong></td><td><strong>Carlos</strong></td><td>Informática</td><td>Manhã</td><td><strong>6,0</strong></td><td><span class="badge badge-amber">Recuperação</span></td></tr>
+        <tr><td><strong>3</strong></td><td><strong>Júlia</strong></td><td>Banco de Dados</td><td>Noite</td><td><strong>9,0</strong></td><td><span class="badge badge-green">Aprovada</span></td></tr>
+        <tr><td><strong>4</strong></td><td><strong>Marcos</strong></td><td>Redes</td><td>Tarde</td><td><strong>5,5</strong></td><td><span class="badge badge-red">Recuperação</span></td></tr>
+        <tr><td><strong>5</strong></td><td><strong>Beatriz</strong></td><td>Banco de Dados</td><td>Manhã</td><td><strong>7,5</strong></td><td><span class="badge badge-green">Aprovada</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="highlight reveal">
+    <strong>🧩 Lendo a tabela</strong>
+    Cada <strong>linha</strong> é um aluno. Cada <strong>coluna</strong> é uma característica desse aluno. O campo <strong>ID</strong> é a <strong>chave primária</strong>: um número único que diferencia cada registro dos demais — mesmo que dois alunos tenham o mesmo nome, o ID será diferente.
+  </div>
+</div>
+</section>
+
+<!-- 6. SQL -->
+<section id="sql">
+<div class="container">
+  <p class="section-label">Módulo 6</p>
+  <h2 class="section-title">SQL — A Linguagem dos Dados</h2>
+  <p class="section-desc">SQL (Structured Query Language) é a linguagem padrão para criar, consultar, alterar e excluir dados em bancos relacionais. É a ferramenta mais importante no dia a dia de quem trabalha com dados.</p>
+
+  <div class="sql-commands reveal">
+    <div class="sql-cmd">
+      <div class="sql-cmd-kw" style="color:var(--primary)">SELECT</div>
+      <div class="sql-cmd-desc"><strong>Consultar / ler dados</strong>Busca registros de uma ou mais tabelas. O comando mais utilizado no trabalho diário com dados.</div>
+    </div>
+    <div class="sql-cmd">
+      <div class="sql-cmd-kw" style="color:var(--green)">INSERT</div>
+      <div class="sql-cmd-desc"><strong>Inserir novos dados</strong>Adiciona um novo registro em uma tabela. Usado ao cadastrar um aluno, produto, cliente etc.</div>
+    </div>
+    <div class="sql-cmd">
+      <div class="sql-cmd-kw" style="color:var(--amber)">UPDATE</div>
+      <div class="sql-cmd-desc"><strong>Atualizar dados existentes</strong>Altera informações já cadastradas, como corrigir uma nota, atualizar um telefone ou mudar o status de um pedido.</div>
+    </div>
+    <div class="sql-cmd">
+      <div class="sql-cmd-kw" style="color:var(--red)">DELETE</div>
+      <div class="sql-cmd-desc"><strong>Excluir registros</strong>Remove registros de uma tabela. Use sempre com WHERE para não apagar tudo! Operação irreversível se não houver backup.</div>
+    </div>
+    <div class="sql-cmd">
+      <div class="sql-cmd-kw" style="color:var(--purple)">CREATE</div>
+      <div class="sql-cmd-desc"><strong>Criar estruturas</strong>Cria tabelas, bancos de dados, índices e outros objetos. É o primeiro passo ao implementar um banco de dados novo.</div>
+    </div>
+    <div class="sql-cmd">
+      <div class="sql-cmd-kw" style="color:var(--muted)">DROP</div>
+      <div class="sql-cmd-desc"><strong>Apagar estruturas</strong>Remove tabelas ou bancos inteiros. Extremamente cuidado — é irreversível! Nunca use sem ter certeza absoluta do que está fazendo.</div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:700;margin:3rem 0 1rem;color:#f0f8ff" class="reveal">Exemplos práticos de código SQL</h3>
+
+  <div class="tabs reveal" id="sql-tabs">
+    <button class="tab active" onclick="switchTab('sql-tabs','t-select')">SELECT básico</button>
+    <button class="tab" onclick="switchTab('sql-tabs','t-where')">SELECT + WHERE</button>
+    <button class="tab" onclick="switchTab('sql-tabs','t-insert')">INSERT</button>
+    <button class="tab" onclick="switchTab('sql-tabs','t-update')">UPDATE</button>
+    <button class="tab" onclick="switchTab('sql-tabs','t-create')">CREATE TABLE</button>
+  </div>
+
+  <div id="t-select" class="tab-panel active reveal">
+    <div class="code-block">
+      <div class="code-header">
+        <div style="display:flex;align-items:center;gap:.75rem"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span>Consultar todos os alunos</span></div>
+        <button class="copy-btn" onclick="copyCode(this)">copiar</button>
+      </div>
+      <div class="code-body"><pre><span class="cmt">-- Retorna TODOS os registros e TODAS as colunas da tabela</span>
+<span class="kw">SELECT</span> <span class="op">*</span>
+<span class="kw">FROM</span> <span class="tbl">alunos</span>;
+
+<span class="cmt">-- Retorna apenas nome, curso e nota (colunas específicas)</span>
+<span class="kw">SELECT</span> <span class="col">nome</span>, <span class="col">curso</span>, <span class="col">nota</span>
+<span class="kw">FROM</span> <span class="tbl">alunos</span>;
+
+<span class="cmt">-- Ordenar por nota do maior para o menor</span>
+<span class="kw">SELECT</span> <span class="col">nome</span>, <span class="col">nota</span>
+<span class="kw">FROM</span> <span class="tbl">alunos</span>
+<span class="kw">ORDER BY</span> <span class="col">nota</span> <span class="kw">DESC</span>;</pre></div>
+    </div>
+    <div class="highlight"><strong>💡 Dica</strong>O <code style="color:var(--amber)">*</code> significa "todos os campos". Em produção, prefira sempre nomear as colunas — é mais eficiente e claro.</div>
+  </div>
+
+  <div id="t-where" class="tab-panel reveal">
+    <div class="code-block">
+      <div class="code-header">
+        <div style="display:flex;align-items:center;gap:.75rem"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span>Filtrar com WHERE</span></div>
+        <button class="copy-btn" onclick="copyCode(this)">copiar</button>
+      </div>
+      <div class="code-body"><pre><span class="cmt">-- Somente alunos do curso de Banco de Dados</span>
+<span class="kw">SELECT</span> <span class="op">*</span>
+<span class="kw">FROM</span> <span class="tbl">alunos</span>
+<span class="kw">WHERE</span> <span class="col">curso</span> <span class="op">=</span> <span class="str">'Banco de Dados'</span>;
+
+<span class="cmt">-- Alunos com nota igual ou acima de 7,0 (aprovados)</span>
+<span class="kw">SELECT</span> <span class="col">nome</span>, <span class="col">nota</span>, <span class="col">situacao</span>
+<span class="kw">FROM</span> <span class="tbl">alunos</span>
+<span class="kw">WHERE</span> <span class="col">nota</span> <span class="op">>=</span> <span class="num">7.0</span>;
+
+<span class="cmt">-- Alunos do curso de BD que estudam à noite</span>
+<span class="kw">SELECT</span> <span class="col">nome</span>, <span class="col">turno</span>
+<span class="kw">FROM</span> <span class="tbl">alunos</span>
+<span class="kw">WHERE</span> <span class="col">curso</span> <span class="op">=</span> <span class="str">'Banco de Dados'</span>
+  <span class="kw">AND</span> <span class="col">turno</span> <span class="op">=</span> <span class="str">'Noite'</span>;</pre></div>
+    </div>
+  </div>
+
+  <div id="t-insert" class="tab-panel reveal">
+    <div class="code-block">
+      <div class="code-header">
+        <div style="display:flex;align-items:center;gap:.75rem"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span>Inserir novo registro</span></div>
+        <button class="copy-btn" onclick="copyCode(this)">copiar</button>
+      </div>
+      <div class="code-body"><pre><span class="cmt">-- Cadastrar um novo aluno</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">alunos</span> (<span class="col">nome</span>, <span class="col">curso</span>, <span class="col">turno</span>, <span class="col">nota</span>, <span class="col">situacao</span>)
+<span class="kw">VALUES</span> (<span class="str">'Lucas'</span>, <span class="str">'Banco de Dados'</span>, <span class="str">'Manhã'</span>, <span class="num">8.0</span>, <span class="str">'Aprovado'</span>);
+
+<span class="cmt">-- O ID é gerado automaticamente pelo banco (auto_increment)</span>
+<span class="cmt">-- Não precisa informar o ID manualmente</span>
+
+<span class="cmt">-- Inserindo múltiplos registros de uma vez</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">alunos</span> (<span class="col">nome</span>, <span class="col">curso</span>, <span class="col">turno</span>, <span class="col">nota</span>, <span class="col">situacao</span>)
+<span class="kw">VALUES</span>
+  (<span class="str">'Marina'</span>, <span class="str">'Redes'</span>, <span class="str">'Tarde'</span>, <span class="num">7.5</span>, <span class="str">'Aprovada'</span>),
+  (<span class="str">'Pedro'</span>, <span class="str">'Informática'</span>, <span class="str">'Manhã'</span>, <span class="num">5.0</span>, <span class="str">'Recuperação'</span>);</pre></div>
+    </div>
+  </div>
+
+  <div id="t-update" class="tab-panel reveal">
+    <div class="code-block">
+      <div class="code-header">
+        <div style="display:flex;align-items:center;gap:.75rem"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span>Atualizar dados existentes</span></div>
+        <button class="copy-btn" onclick="copyCode(this)">copiar</button>
+      </div>
+      <div class="code-body"><pre><span class="cmt">-- Corrigir a nota do aluno com ID = 2</span>
+<span class="kw">UPDATE</span> <span class="tbl">alunos</span>
+<span class="kw">SET</span> <span class="col">nota</span> <span class="op">=</span> <span class="num">7.5</span>, <span class="col">situacao</span> <span class="op">=</span> <span class="str">'Aprovado'</span>
+<span class="kw">WHERE</span> <span class="col">id</span> <span class="op">=</span> <span class="num">2</span>;
+
+<span class="cmt">-- ⚠️ PERIGO: sem WHERE, atualiza TODOS os registros!</span>
+<span class="cmt">-- UPDATE alunos SET situacao = 'Aprovado';  ← NUNCA faça isso</span>
+
+<span class="cmt">-- Atualizar todos os alunos com nota >= 7.0</span>
+<span class="kw">UPDATE</span> <span class="tbl">alunos</span>
+<span class="kw">SET</span> <span class="col">situacao</span> <span class="op">=</span> <span class="str">'Aprovado'</span>
+<span class="kw">WHERE</span> <span class="col">nota</span> <span class="op">>=</span> <span class="num">7.0</span>;</pre></div>
+    </div>
+    <div class="highlight red"><strong>⚠️ Atenção crítica</strong>Sempre use <code style="color:var(--amber)">WHERE</code> no UPDATE e no DELETE! Sem WHERE, o comando afeta <strong>todos os registros</strong> da tabela — um erro gravíssimo em produção.</div>
+  </div>
+
+  <div id="t-create" class="tab-panel reveal">
+    <div class="code-block">
+      <div class="code-header">
+        <div style="display:flex;align-items:center;gap:.75rem"><div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><span>Criar uma tabela do zero</span></div>
+        <button class="copy-btn" onclick="copyCode(this)">copiar</button>
+      </div>
+      <div class="code-body"><pre><span class="cmt">-- Criando a tabela alunos com tipos de dados definidos</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">alunos</span> (
+  <span class="col">id</span>        <span class="fn">INT</span> <span class="kw">AUTO_INCREMENT PRIMARY KEY</span>,
+  <span class="col">nome</span>      <span class="fn">VARCHAR</span>(<span class="num">100</span>) <span class="kw">NOT NULL</span>,
+  <span class="col">curso</span>     <span class="fn">VARCHAR</span>(<span class="num">80</span>)  <span class="kw">NOT NULL</span>,
+  <span class="col">turno</span>     <span class="fn">ENUM</span>(<span class="str">'Manhã'</span>, <span class="str">'Tarde'</span>, <span class="str">'Noite'</span>),
+  <span class="col">nota</span>      <span class="fn">DECIMAL</span>(<span class="num">4</span>,<span class="num">2</span>),
+  <span class="col">situacao</span>  <span class="fn">VARCHAR</span>(<span class="num">20</span>),
+  <span class="col">criado_em</span> <span class="fn">TIMESTAMP</span> <span class="kw">DEFAULT</span> <span class="fn">CURRENT_TIMESTAMP</span>
+);
+
+<span class="cmt">-- Tipos de dados mais comuns:</span>
+<span class="cmt">-- INT       → números inteiros   (id, quantidade)</span>
+<span class="cmt">-- VARCHAR   → texto variável     (nome, endereço)</span>
+<span class="cmt">-- DECIMAL   → números decimais   (nota, preço)</span>
+<span class="cmt">-- DATE      → data               (2026-05-28)</span>
+<span class="cmt">-- TIMESTAMP → data e hora        (2026-05-28 14:35:00)</span>
+<span class="cmt">-- BOOLEAN   → verdadeiro/falso   (ativo: true/false)</span></pre></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 7. FILTRAGEM -->
+<section id="filtragem">
+<div class="container">
+  <p class="section-label">Módulo 7</p>
+  <h2 class="section-title">Mecanismos de Filtragem de Dados</h2>
+  <p class="section-desc">Filtrar dados significa selecionar apenas as informações que atendem a um critério específico. Isso evita trabalho desnecessário e permite análises muito mais precisas.</p>
+
+  <div class="filter-list reveal">
+    <div class="filter-row">
+      <div class="filter-q">👤 Quais alunos foram aprovados?</div>
+      <div class="filter-code">WHERE situacao = 'Aprovada'</div>
+    </div>
+    <div class="filter-row">
+      <div class="filter-q">🌙 Quais alunos estudam à noite?</div>
+      <div class="filter-code">WHERE turno = 'Noite'</div>
+    </div>
+    <div class="filter-row">
+      <div class="filter-q">📊 Quais alunos tiraram nota ≥ 7,0?</div>
+      <div class="filter-code">WHERE nota >= 7.0</div>
+    </div>
+    <div class="filter-row">
+      <div class="filter-q">🔧 Quais chamados técnicos estão abertos?</div>
+      <div class="filter-code">WHERE status = 'Aberto'</div>
+    </div>
+    <div class="filter-row">
+      <div class="filter-q">📅 Vendas ocorridas em maio de 2026?</div>
+      <div class="filter-code">WHERE data BETWEEN '2026-05-01' AND '2026-05-31'</div>
+    </div>
+    <div class="filter-row">
+      <div class="filter-q">🏙️ Clientes de Belo Horizonte ou Ibirité?</div>
+      <div class="filter-code">WHERE cidade IN ('Belo Horizonte', 'Ibirité')</div>
+    </div>
+    <div class="filter-row">
+      <div class="filter-q">🔍 Clientes cujo nome começa com "Mar"?</div>
+      <div class="filter-code">WHERE nome LIKE 'Mar%'</div>
+    </div>
+  </div>
+
+  <div class="highlight reveal mt-2">
+    <strong>💼 Na prática profissional</strong>
+    Uma organização raramente precisa ver <em>todos os dados</em> ao mesmo tempo. Normalmente ela precisa localizar dados específicos: clientes de uma cidade, alunos de uma turma, produtos com baixo estoque, chamados abertos ou vendas de um período. O <code style="color:var(--primary)">WHERE</code> é o filtro que torna isso possível.
+  </div>
+</div>
+</section>
+
+<!-- 8. ARQUITETURA -->
+<section id="arquitetura">
+<div class="container">
+  <p class="section-label">Módulo 8</p>
+  <h2 class="section-title">Ambiente e Arquitetura de um SGBD</h2>
+  <p class="section-desc">Quando você usa um aplicativo, não acessa o banco de dados diretamente. Existe uma cadeia de elementos entre você e os dados armazenados.</p>
+
+  <div class="arch-flow reveal">
+    <div class="arch-node">
+      <span class="icon">👤</span>
+      <div class="label">Usuário</div>
+      <div class="sub">Interage com a tela</div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-node">
+      <span class="icon">📱</span>
+      <div class="label">Aplicação</div>
+      <div class="sub">App / site / sistema</div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-node" style="border-color:var(--primary)">
+      <span class="icon">⚙️</span>
+      <div class="label" style="color:var(--primary)">SGBD</div>
+      <div class="sub">Gerencia tudo</div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-node" style="border-color:var(--teal)">
+      <span class="icon">🗄️</span>
+      <div class="label" style="color:var(--teal)">Banco de Dados</div>
+      <div class="sub">Armazena os dados</div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-node">
+      <span class="icon">✅</span>
+      <div class="label">Resposta</div>
+      <div class="sub">Exibida na tela</div>
+    </div>
+  </div>
+
+  <div class="highlight reveal">
+    <strong>🏦 Exemplo real: aplicativo bancário</strong>
+    Ao consultar o saldo, você não entra diretamente no banco de dados. Você usa o app (aplicação), que envia uma requisição ao SGBD com suas credenciais. O SGBD verifica suas permissões, acessa o banco, recupera <em>apenas o seu saldo</em> e devolve a informação formatada na tela. Tudo isso em milissegundos.
+  </div>
+
+  <div class="table-wrap reveal mt-2">
+    <table>
+      <thead><tr><th>Elemento</th><th>Função</th><th>Exemplo prático</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Usuário</strong></td><td class="text-muted">Pessoa que usa o sistema para consultar, cadastrar ou analisar.</td><td class="text-muted">Aluno consultando notas no portal.</td></tr>
+        <tr><td><strong>Aplicação</strong></td><td class="text-muted">Tela ou programa que recebe a ação e envia ao banco.</td><td class="text-muted">Portal do aluno, app do banco, e-commerce.</td></tr>
+        <tr><td><strong>SGBD</strong></td><td class="text-muted">Software que gerencia as operações, segurança e integridade.</td><td class="text-muted">PostgreSQL, MySQL, SQL Server.</td></tr>
+        <tr><td><strong>Banco de Dados</strong></td><td class="text-muted">Conjunto organizado onde os dados são fisicamente armazenados.</td><td class="text-muted">Arquivos e estruturas em disco.</td></tr>
+        <tr><td><strong>Permissões</strong></td><td class="text-muted">Regras que definem quem pode ver, inserir, alterar ou excluir.</td><td class="text-muted">Aluno vê notas; professor pode lançar; gestor pode tudo.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</section>
+
+<!-- 9. MODELAGEM -->
+<section id="modelagem">
+<div class="container">
+  <p class="section-label">Módulo 9</p>
+  <h2 class="section-title">Modelagem de Dados</h2>
+  <p class="section-desc">Modelagem é o planejamento do banco antes da criação das tabelas. Como um arquiteto que desenha a planta antes de construir, o analista modela antes de programar.</p>
+
+  <div class="quote reveal">"Um bom banco de dados nasce antes do primeiro comando SQL. Ele nasce no planejamento."</div>
+
+  <div class="model-steps reveal">
+    <div class="model-step" data-step="1" style="border-top:3px solid var(--primary)">
+      <div class="step-num" style="background:rgba(14,165,233,.15);color:var(--primary)">1</div>
+      <h3 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:#f0f8ff;margin-bottom:.5rem">Modelo Conceitual</h3>
+      <p style="font-size:.88rem;color:var(--muted);margin-bottom:1rem">Visão geral das principais entidades e seus relacionamentos, sem se preocupar com detalhes técnicos. É a "ideia em alto nível".</p>
+      <div class="highlight" style="margin:0"><strong>Exemplo</strong>Um sistema escolar tem: <strong>Aluno</strong>, <strong>Curso</strong> e <strong>Matrícula</strong>. Um aluno pode estar matriculado em um ou mais cursos.</div>
+    </div>
+    <div class="model-step" data-step="2" style="border-top:3px solid var(--teal)">
+      <div class="step-num" style="background:rgba(20,184,166,.15);color:var(--teal)">2</div>
+      <h3 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:#f0f8ff;margin-bottom:.5rem">Modelo Lógico</h3>
+      <p style="font-size:.88rem;color:var(--muted);margin-bottom:1rem">Transformação das ideias em tabelas, campos, chaves e relações. Define como os dados serão estruturados, mas ainda sem detalhes do SGBD.</p>
+      <div style="background:var(--code-bg);border-radius:var(--radius-sm);padding:.75rem 1rem;font-size:.82rem;color:var(--muted)">
+        Tabela <strong style="color:var(--primary)">Aluno</strong>: id, nome, turno<br>
+        Tabela <strong style="color:var(--teal)">Curso</strong>: id, nome, carga_horaria<br>
+        Tabela <strong style="color:var(--amber)">Matricula</strong>: id, id_aluno, id_curso, data
+      </div>
+    </div>
+    <div class="model-step" data-step="3" style="border-top:3px solid var(--amber)">
+      <div class="step-num" style="background:rgba(245,158,11,.15);color:var(--amber)">3</div>
+      <h3 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:#f0f8ff;margin-bottom:.5rem">Modelo Físico</h3>
+      <p style="font-size:.88rem;color:var(--muted);margin-bottom:1rem">Implementação real no SGBD escolhido, com tipos de dados específicos, índices, restrições e comandos SQL reais.</p>
+      <div class="code-block" style="margin:0">
+        <div class="code-body" style="padding:.75rem 1rem"><pre style="font-size:.78rem"><span class="kw">CREATE TABLE</span> <span class="tbl">aluno</span> (
+  <span class="col">id</span>    <span class="fn">INT</span> <span class="kw">PRIMARY KEY</span>,
+  <span class="col">nome</span>  <span class="fn">VARCHAR</span>(<span class="num">100</span>),
+  <span class="col">turno</span> <span class="fn">VARCHAR</span>(<span class="num">10</span>)
+);</pre></div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:700;margin:3rem 0 1.5rem;color:#f0f8ff" class="reveal">Chaves Primária e Estrangeira</h3>
+  <div class="keys-grid reveal">
+    <div class="key-card pk">
+      <div style="font-size:1.5rem;margin-bottom:.75rem">🔑</div>
+      <h3>Chave Primária (PK)</h3>
+      <p style="font-size:.88rem;color:var(--muted);margin:.5rem 0 1rem">Campo que <strong style="color:var(--text)">identifica de forma única</strong> cada registro de uma tabela. Não pode se repetir, não pode ser nulo.</p>
+      <div class="highlight amber" style="margin:0"><strong>Exemplo</strong>O campo <code>id_aluno</code> na tabela Aluno. Mesmo que dois alunos tenham o mesmo nome, os IDs serão diferentes.</div>
+    </div>
+    <div class="key-card fk">
+      <div style="font-size:1.5rem;margin-bottom:.75rem">🔗</div>
+      <h3>Chave Estrangeira (FK)</h3>
+      <p style="font-size:.88rem;color:var(--muted);margin:.5rem 0 1rem">Campo que <strong style="color:var(--text)">cria um relacionamento</strong> entre duas tabelas. Aponta para a chave primária de outra tabela.</p>
+      <div class="highlight" style="margin:0;border-color:var(--teal);background:rgba(20,184,166,.07)"><strong style="color:var(--teal)">Exemplo</strong>O campo <code>id_curso</code> dentro da tabela Matrícula aponta para a PK da tabela Curso, criando o vínculo entre as duas.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 10. SEGURANÇA -->
+<section id="seguranca">
+<div class="container">
+  <p class="section-label">Módulo 10</p>
+  <h2 class="section-title">Segurança da Informação em Banco de Dados</h2>
+  <p class="section-desc">Banco de dados pode armazenar dados pessoais, prontuários, senhas e informações financeiras. Segurança não é detalhe — é responsabilidade.</p>
+
+  <div class="highlight red reveal">
+    <strong>⚠️ Responsabilidade legal</strong>
+    No Brasil, a <strong>Lei Geral de Proteção de Dados (LGPD – Lei nº 13.709/2018)</strong> determina regras claras sobre coleta, armazenamento e tratamento de dados pessoais. Profissionais que trabalham com banco de dados precisam conhecer e aplicar esses princípios.
+  </div>
+
+  <div class="sec-grid reveal mt-2">
+    <div class="sec-card">
+      <span class="sec-icon">🔐</span>
+      <h4>Controle de Acesso</h4>
+      <p>Cada usuário deve acessar somente o necessário para sua função. Um aluno vê suas notas; um professor lança notas da sua turma; o gestor acessa relatórios gerais.</p>
+    </div>
+    <div class="sec-card">
+      <span class="sec-icon">🗝️</span>
+      <h4>Senhas Fortes</h4>
+      <p>Senhas longas, com combinação de letras, números e símbolos impedem acessos não autorizados. Nunca use senhas simples como "123456" ou "admin".</p>
+    </div>
+    <div class="sec-card">
+      <span class="sec-icon">👥</span>
+      <h4>Permissões por Perfil</h4>
+      <p>Crie perfis distintos: aluno, professor, gestor, administrador. Cada perfil recebe apenas as permissões necessárias para seu trabalho (princípio do menor privilégio).</p>
+    </div>
+    <div class="sec-card">
+      <span class="sec-icon">📋</span>
+      <h4>Logs de Auditoria</h4>
+      <p>Registros automáticos de todas as ações realizadas: quem acessou, o quê alterou, quando e de onde. Essenciais para identificar abusos e investigar incidentes.</p>
+    </div>
+    <div class="sec-card">
+      <span class="sec-icon">🔒</span>
+      <h4>Criptografia</h4>
+      <p>Protege dados em armazenamento (at rest) e em transmissão (in transit). Senhas devem ser armazenadas com hash (bcrypt, Argon2) — NUNCA em texto puro.</p>
+    </div>
+    <div class="sec-card">
+      <span class="sec-icon">🛡️</span>
+      <h4>Boas Práticas de Uso</h4>
+      <p>Não compartilhar senha, não deixar sessão aberta, desconfiar de links suspeitos (phishing), usar VPN em conexões remotas e manter o SGBD atualizado.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 11. BACKUP -->
+<section id="backup">
+<div class="container">
+  <p class="section-label">Módulo 11</p>
+  <h2 class="section-title">Backup: a Cópia de Segurança dos Dados</h2>
+  <p class="section-desc">Backup é a garantia de que os dados podem ser recuperados em caso de falha, erro humano, ataque ou desastre. Não é opcional — é obrigatório.</p>
+
+  <div class="quote reveal">"Quem não tem backup, não tem banco de dados. Tem apenas esperança."</div>
+
+  <div class="backup-grid reveal">
+    <div class="backup-card">
+      <div class="bk-type">Tipo 01</div>
+      <h4>Backup Completo</h4>
+      <p>Copia <strong>todos os dados</strong> selecionados de uma vez. É o mais seguro, mas também o que ocupa mais espaço e leva mais tempo.</p>
+    </div>
+    <div class="backup-card">
+      <div class="bk-type">Tipo 02</div>
+      <h4>Backup Incremental</h4>
+      <p>Copia apenas o que <strong>mudou desde o último backup</strong> (completo ou incremental). Rápido e econômico em espaço, mas a restauração é mais trabalhosa.</p>
+    </div>
+    <div class="backup-card">
+      <div class="bk-type">Tipo 03</div>
+      <h4>Backup Diferencial</h4>
+      <p>Copia tudo que mudou desde o <strong>último backup completo</strong>. Equilíbrio entre completo e incremental: restauração mais simples que o incremental.</p>
+    </div>
+    <div class="backup-card">
+      <div class="bk-type">Local</div>
+      <h4>Backup Local</h4>
+      <p>Armazenado em dispositivos internos da organização (HD externo, servidor local). Acesso rápido, mas vulnerável a desastres físicos no mesmo local.</p>
+    </div>
+    <div class="backup-card">
+      <div class="bk-type">Nuvem</div>
+      <h4>Backup em Nuvem</h4>
+      <p>Armazenado em infraestrutura externa (AWS S3, Google Cloud, Azure). Protege contra desastres físicos locais e permite acesso remoto.</p>
+    </div>
+    <div class="backup-card" style="border-color:var(--amber)">
+      <div class="bk-type" style="color:var(--amber)">⚠️ Crítico</div>
+      <h4>Teste de Restauração</h4>
+      <p>Verificar periodicamente se o backup pode ser <strong>efetivamente restaurado</strong>. Um backup não testado é uma ilusão de segurança.</p>
+    </div>
+  </div>
+
+  <div class="highlight amber reveal mt-2">
+    <strong>🎯 Regra 3-2-1 de backup</strong>
+    Mantenha <strong>3 cópias</strong> dos dados, em <strong>2 mídias diferentes</strong>, com <strong>1 cópia fora do local</strong> (offsite ou nuvem). Esta é a estratégia recomendada por especialistas em continuidade de negócios.
+  </div>
+</div>
+</section>
+
+<!-- 12. RELATÓRIOS -->
+<section id="relatorios">
+<div class="container">
+  <p class="section-label">Módulo 12</p>
+  <h2 class="section-title">Relatórios: Transformando Dados em Análise</h2>
+  <p class="section-desc">Relatório é uma forma organizada de apresentar informações extraídas do banco. Um bom relatório responde a perguntas de gestão e orienta decisões.</p>
+
+  <div class="table-wrap reveal">
+    <table>
+      <thead><tr><th>Área</th><th>Exemplo de Relatório</th><th>Pergunta respondida</th></tr></thead>
+      <tbody>
+        <tr><td><strong>🎓 Educação</strong></td><td class="text-muted">Frequência dos alunos, notas por turma, evasão escolar, desempenho por disciplina.</td><td class="text-muted">Quais turmas precisam de reforço?</td></tr>
+        <tr><td><strong>🏥 Saúde</strong></td><td class="text-muted">Atendimentos por unidade, vacinas aplicadas, consultas agendadas, filas de espera.</td><td class="text-muted">Qual unidade está sobrecarregada?</td></tr>
+        <tr><td><strong>🛒 Comércio</strong></td><td class="text-muted">Produtos mais vendidos, estoque crítico, vendas por período, clientes ativos.</td><td class="text-muted">Quais produtos repor com urgência?</td></tr>
+        <tr><td><strong>💻 TI</strong></td><td class="text-muted">Chamados abertos, finalizados, tempo médio de atendimento, SLA cumprido/perdido.</td><td class="text-muted">Qual equipe está fora do SLA?</td></tr>
+        <tr><td><strong>🏛️ Gestão Pública</strong></td><td class="text-muted">Protocolos, serviços prestados, arrecadação, despesas e transparência.</td><td class="text-muted">Quais serviços têm mais demanda?</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="highlight reveal mt-2">
+    <strong>📊 O que torna um relatório útil</strong>
+    Um bom relatório precisa responder: <strong>o que aconteceu</strong>, <strong>onde aconteceu</strong>, <strong>com quem aconteceu</strong>, <strong>em qual período</strong> e <strong>qual decisão precisa ser tomada</strong>. Relatório sem filtro bem definido é apenas uma lista bonita.
+  </div>
+</div>
+</section>
+
+<!-- 13. FERRAMENTAS -->
+<section id="ferramentas">
+<div class="container">
+  <p class="section-label">Módulo 13</p>
+  <h2 class="section-title">Ferramentas para Aprender e Trabalhar</h2>
+  <p class="section-desc">Existem ferramentas gratuitas e pagas para criar, consultar, administrar e modelar bancos de dados. Para quem está começando, o mais importante é praticar.</p>
+
+  <div class="tools-grid reveal">
+    <div class="tool-card"><span class="tool-icon">🐘</span><div class="tool-info"><h4>pgAdmin</h4><p>Administração PostgreSQL</p></div></div>
+    <div class="tool-card"><span class="tool-icon">🐬</span><div class="tool-info"><h4>MySQL Workbench</h4><p>Modelagem e admin MySQL</p></div></div>
+    <div class="tool-card"><span class="tool-icon">🟦</span><div class="tool-info"><h4>SQL Server SSMS</h4><p>Administração SQL Server</p></div></div>
+    <div class="tool-card"><span class="tool-icon">🔴</span><div class="tool-info"><h4>Oracle SQL Developer</h4><p>Consulta e admin Oracle</p></div></div>
+    <div class="tool-card"><span class="tool-icon">🦫</span><div class="tool-info"><h4>DBeaver</h4><p>Multiplataforma, qualquer banco</p></div></div>
+    <div class="tool-card"><span class="tool-icon">📦</span><div class="tool-info"><h4>SQLite Studio</h4><p>Bancos SQLite locais</p></div></div>
+    <div class="tool-card"><span class="tool-icon">📐</span><div class="tool-info"><h4>BRModelo</h4><p>Modelagem conceitual e lógica</p></div></div>
+    <div class="tool-card"><span class="tool-icon">🌐</span><div class="tool-info"><h4>Draw.io</h4><p>Diagramas e fluxos online</p></div></div>
+  </div>
+
+  <div class="highlight green reveal mt-2">
+    <strong>🚀 Por onde começar?</strong>
+    Instale o <strong>DBeaver</strong> (gratuito, funciona com vários bancos) + <strong>MySQL ou SQLite</strong> (fácil de instalar). Com esses dois, você já consegue praticar todos os exemplos deste material no seu próprio computador.
+  </div>
+</div>
+</section>
+
+<!-- 14. GLOSSÁRIO -->
+<section id="glossario">
+<div class="container">
+  <p class="section-label">Módulo 14</p>
+  <h2 class="section-title">Glossário Essencial</h2>
+  <p class="section-desc">Os termos técnicos mais importantes que você precisa conhecer para trabalhar com banco de dados.</p>
+
+  <div class="glossary-grid reveal">
+    <div class="gloss-item"><div class="gloss-term">banco_de_dados</div><div class="gloss-def">Coleção organizada de dados armazenados para consulta, controle e análise.</div></div>
+    <div class="gloss-item"><div class="gloss-term">SGBD</div><div class="gloss-def">Sistema Gerenciador de Banco de Dados — software que administra o banco de dados.</div></div>
+    <div class="gloss-item"><div class="gloss-term">tabela</div><div class="gloss-def">Estrutura composta por linhas (registros) e colunas (campos). Representa uma entidade.</div></div>
+    <div class="gloss-item"><div class="gloss-term">registro</div><div class="gloss-def">Cada linha de uma tabela. Representa um único elemento da entidade (ex: um aluno).</div></div>
+    <div class="gloss-item"><div class="gloss-term">campo</div><div class="gloss-def">Cada coluna de uma tabela. Representa uma característica do registro (ex: nome, nota).</div></div>
+    <div class="gloss-item"><div class="gloss-term">SQL</div><div class="gloss-def">Structured Query Language — linguagem padrão para consultar e manipular bancos relacionais.</div></div>
+    <div class="gloss-item"><div class="gloss-term">chave_primaria (PK)</div><div class="gloss-def">Campo que identifica de forma única cada registro de uma tabela. Não pode repetir.</div></div>
+    <div class="gloss-item"><div class="gloss-term">chave_estrangeira (FK)</div><div class="gloss-def">Campo que cria relacionamento entre tabelas, apontando para a PK de outra tabela.</div></div>
+    <div class="gloss-item"><div class="gloss-term">filtro / WHERE</div><div class="gloss-def">Cláusula SQL usada para selecionar apenas registros que atendem a um critério.</div></div>
+    <div class="gloss-item"><div class="gloss-term">backup</div><div class="gloss-def">Cópia de segurança dos dados. Essencial para recuperação em caso de falha ou desastre.</div></div>
+    <div class="gloss-item"><div class="gloss-term">relatório</div><div class="gloss-def">Apresentação organizada de informações extraídas do banco para apoiar decisões.</div></div>
+    <div class="gloss-item"><div class="gloss-term">NoSQL</div><div class="gloss-def">Modelo de banco de dados flexível, usado em cenários de grande volume e dados variados.</div></div>
+    <div class="gloss-item"><div class="gloss-term">modelagem</div><div class="gloss-def">Planejamento do banco de dados antes da criação: conceitual, lógico e físico.</div></div>
+    <div class="gloss-item"><div class="gloss-term">integridade</div><div class="gloss-def">Garantia de que os dados são consistentes, corretos e livres de duplicidades.</div></div>
+    <div class="gloss-item"><div class="gloss-term">índice</div><div class="gloss-def">Estrutura que acelera consultas ao banco. Como o índice de um livro — facilita encontrar o que você quer.</div></div>
+    <div class="gloss-item"><div class="gloss-term">transação</div><div class="gloss-def">Conjunto de operações executadas como uma unidade. Ou tudo acontece, ou nada acontece (ACID).</div></div>
+  </div>
+</div>
+</section>
+
+<!-- 15. ATIVIDADES -->
+<section id="atividades">
+<div class="container">
+  <p class="section-label">Atividades Práticas</p>
+  <h2 class="section-title">Praticando o que você aprendeu</h2>
+  <p class="section-desc">As atividades abaixo simulam situações reais de trabalho com dados. Responda com base no conteúdo estudado.</p>
+
+  <div class="activity reveal">
+    <div class="activity-header">
+      <div class="activity-num">1</div>
+      <h3>Banco de Dados Humano</h3>
+    </div>
+    <p>Observe a tabela de alunos abaixo e responda às perguntas como se fosse o banco de dados respondendo uma consulta SQL.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ID</th><th>Nome</th><th>Curso</th><th>Turno</th><th>Nota</th><th>Situação</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Ana</td><td>Banco de Dados</td><td>Noite</td><td>8,5</td><td><span class="badge badge-green">Aprovada</span></td></tr>
+          <tr><td>2</td><td>Carlos</td><td>Informática</td><td>Manhã</td><td>6,0</td><td><span class="badge badge-amber">Recuperação</span></td></tr>
+          <tr><td>3</td><td>Júlia</td><td>Banco de Dados</td><td>Noite</td><td>9,0</td><td><span class="badge badge-green">Aprovada</span></td></tr>
+          <tr><td>4</td><td>Marcos</td><td>Redes</td><td>Tarde</td><td>5,5</td><td><span class="badge badge-red">Recuperação</span></td></tr>
+          <tr><td>5</td><td>Beatriz</td><td>Banco de Dados</td><td>Manhã</td><td>7,5</td><td><span class="badge badge-green">Aprovada</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ol>
+      <li>Quais alunos pertencem ao curso de Banco de Dados? Qual seria o comando WHERE?</li>
+      <li>Quais alunos estudam no turno da noite?</li>
+      <li>Quais alunos têm nota maior ou igual a 7,0?</li>
+      <li>Quantos alunos estão em recuperação? Quais são seus nomes?</li>
+      <li>Escreva um comando SQL completo com SELECT e WHERE para buscar os alunos aprovados do curso de Banco de Dados.</li>
+    </ol>
+  </div>
+
+  <div class="activity reveal">
+    <div class="activity-header">
+      <div class="activity-num">2</div>
+      <h3>Criando uma Tabela de Biblioteca</h3>
+    </div>
+    <p>Imagine que você precisa criar um banco de dados para controlar os livros de uma biblioteca. Analise a estrutura proposta e responda às perguntas.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Campo</th><th>Tipo sugerido</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td><code style="color:var(--primary)">id_livro</code></td><td><span class="badge badge-blue">INT (PK)</span></td><td class="text-muted">Identificador único do livro.</td></tr>
+          <tr><td><code style="color:var(--primary)">titulo</code></td><td><span class="badge badge-blue">VARCHAR(200)</span></td><td class="text-muted">Nome completo do livro.</td></tr>
+          <tr><td><code style="color:var(--primary)">autor</code></td><td><span class="badge badge-blue">VARCHAR(100)</span></td><td class="text-muted">Nome do autor ou autora.</td></tr>
+          <tr><td><code style="color:var(--primary)">ano_publicacao</code></td><td><span class="badge badge-blue">INT</span></td><td class="text-muted">Ano em que o livro foi publicado.</td></tr>
+          <tr><td><code style="color:var(--primary)">categoria</code></td><td><span class="badge badge-blue">VARCHAR(80)</span></td><td class="text-muted">Área ou assunto (TI, Romance, História...).</td></tr>
+          <tr><td><code style="color:var(--primary)">situacao</code></td><td><span class="badge badge-blue">ENUM</span></td><td class="text-muted">'Disponível', 'Emprestado', 'Reservado'.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ol>
+      <li>Qual campo seria a chave primária? Por quê ele é o mais adequado?</li>
+      <li>Se você precisasse saber quais livros estão disponíveis agora, qual filtro WHERE usaria?</li>
+      <li>Que campo você adicionaria para registrar quem está com o livro emprestado?</li>
+      <li>Tente escrever o comando CREATE TABLE completo para esta tabela.</li>
+    </ol>
+  </div>
+
+  <div class="activity reveal">
+    <div class="activity-header">
+      <div class="activity-num">3</div>
+      <h3>Pensando como Analista de Dados</h3>
+    </div>
+    <div class="highlight amber" style="margin-bottom:1.25rem">
+      <strong>Situação-problema</strong>
+      Uma escola possui dados de alunos, turmas, professores, notas, frequência e disciplinas. A direção deseja saber quais turmas precisam de reforço em determinada disciplina e quais alunos estão com risco de reprovação.
+    </div>
+    <ol>
+      <li>Quais dados a escola precisa armazenar? Liste as entidades (tabelas) necessárias.</li>
+      <li>Quais informações precisam aparecer em um relatório para a direção?</li>
+      <li>Quais filtros SQL seriam úteis para encontrar alunos em risco de reprovação?</li>
+      <li>Que cuidados de segurança são necessários com esses dados (pense na LGPD)?</li>
+      <li>Por que o backup seria crítico neste cenário escolar?</li>
+      <li>Desenhe (no papel ou descreva) o modelo conceitual com pelo menos 3 entidades e seus relacionamentos.</li>
+    </ol>
+  </div>
+</div>
+</section>
+
+<!-- RESUMO FINAL -->
+<section id="resumo" style="background:var(--surface)">
+<div class="container">
+  <p class="section-label">Resumo</p>
+  <h2 class="section-title">O que levar desta aula</h2>
+  <p class="section-desc">Os seis pontos fundamentais que todo profissional de TI precisa internalizar sobre banco de dados.</p>
+
+  <div class="summary-rows reveal">
+    <div class="summary-row">
+      <div class="summary-key">📊 Dados precisam de organização</div>
+      <div class="summary-val">Sem organização, não há informação confiável. Dados desorganizados geram decisões erradas, retrabalho e perda de tempo.</div>
+    </div>
+    <div class="summary-row">
+      <div class="summary-key">⚙️ SGBD gerencia o banco</div>
+      <div class="summary-val">É o software que permite controle, consulta, segurança e backup. Sem ele, os dados não têm administração adequada.</div>
+    </div>
+    <div class="summary-row">
+      <div class="summary-key">🔎 SQL consulta dados</div>
+      <div class="summary-val">A linguagem SQL permite encontrar, inserir, alterar e excluir dados com precisão. É a ferramenta essencial do analista.</div>
+    </div>
+    <div class="summary-row">
+      <div class="summary-key">📐 Modelagem vem antes</div>
+      <div class="summary-val">Planejar o banco de dados antes de criar as tabelas evita erros estruturais, retrabalho e problemas de crescimento futuro.</div>
+    </div>
+    <div class="summary-row">
+      <div class="summary-key">🛡️ Segurança é indispensável</div>
+      <div class="summary-val">Proteger dados pessoais é responsabilidade legal (LGPD) e ética. Controle de acesso, criptografia e auditoria são essenciais.</div>
+    </div>
+    <div class="summary-row">
+      <div class="summary-key">💾 Backup precisa ser testado</div>
+      <div class="summary-val">Fazer backup é obrigatório. Testar a restauração é indispensável. Um backup não verificado pode falhar no momento mais crítico.</div>
+    </div>
+  </div>
+
+  <div class="quote reveal" style="margin-top:3rem">"Quem domina dados amplia sua capacidade de entender problemas, criar soluções e apoiar melhores decisões."</div>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-brand">BD<span style="color:var(--amber)">.</span>dev</div>
+  <p><strong style="color:var(--text)">Prof. Reinaldo Rodrigues</strong> — Diretor de TI | Prefeitura Municipal de Ibirité</p>
+  <p>Curso: Informática Básica / Banco de Dados &nbsp;·&nbsp; Ibirité, Minas Gerais</p>
+  <p style="margin-top:1rem;font-size:.78rem">Material elaborado para fins didáticos. Todos os exemplos são fictícios e criados para fins educacionais.</p>
+</footer>
+
+<script>
+// Progress bar
+window.addEventListener('scroll', () => {
+  const el = document.documentElement;
+  const pct = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+});
+
+// Active nav link
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id);
+      });
+    }
+  });
+}, { threshold: 0.35 });
+sections.forEach(s => observer.observe(s));
+
+// Reveal on scroll
+const revealEls = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); }
+  });
+}, { threshold: 0.1 });
+revealEls.forEach(el => revealObs.observe(el));
+
+// Animated counters
+const counters = document.querySelectorAll('[data-count]');
+const counterObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const target = +e.target.dataset.count;
+      let current = 0;
+      const step = target / 30;
+      const timer = setInterval(() => {
+        current += step;
+        if (current >= target) { e.target.textContent = target + '+'; clearInterval(timer); }
+        else e.target.textContent = Math.ceil(current);
+      }, 40);
+      counterObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+counters.forEach(c => counterObs.observe(c));
+
+// Tabs
+function switchTab(groupId, activeId) {
+  const group = document.getElementById(groupId);
+  group.querySelectorAll('.tab').forEach((t, i) => {
+    const panels = document.querySelectorAll('.tab-panel');
+    // find panels within same group context
+  });
+  // Simpler approach: find sibling panels
+  const parent = group.parentElement;
+  parent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  parent.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  const target = document.getElementById(activeId);
+  if (target) target.classList.add('active');
+}
+
+// Copy code
+function copyCode(btn) {
+  const block = btn.closest('.code-block');
+  const text = block.querySelector('pre').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'copiado!';
+    setTimeout(() => btn.textContent = 'copiar', 2000);
+  });
+}
+</script>
+</body>
+</html>
